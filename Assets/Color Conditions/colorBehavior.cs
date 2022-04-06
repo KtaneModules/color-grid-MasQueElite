@@ -3,24 +3,24 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using buttonColors;
 
-public abstract class colorBehavior : MonoBehaviour
+public class colorBehavior : MonoBehaviour
 {
-	virtual public void determineRules(colorBehavior color)
+	public colorBehavior currentColor { set; get; }
+	public int indexReference;
+	virtual public bool checkForAdjacent(colorBehavior[] adjacent)
 	{
-		// We use two loops to determine whether or not the color of each button is adjacent to its color.
-		for (int i = 0; i < 25; i++)
+		// This is just to check whether or not each button is adjacent orthogonally to the same color.
+		for (int i = 0; i < 4; i++)
 		{
-			for (int j = 0; j < 4; j++)
-			{
-				
-
-			}
+			if (adjacent[i] == null) continue;
+			if (adjacent[i].Equals(currentColor)) return true;
 		}
-		
-
-		
-
+		return false;
+	}
+	public bool Equals(colorBehavior color)
+	{
+        if (color == null) return false;
+		return this.indexReference == color.indexReference;
 	}
 }

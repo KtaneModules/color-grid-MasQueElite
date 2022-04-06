@@ -266,7 +266,7 @@ public abstract class KtaneModule : ModuleScript
     /// <summary>
     /// An array of ignored modules. Updated by GetIgnoredModules()
     /// </summary>
-    protected string[] IgnoredModules = null;
+    protected new string[] IgnoredModules = null;
 
     /// <summary>
     /// Gets called when a non-ignored module gets solved. The passed string value is the name of the solved module.

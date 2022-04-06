@@ -3,15 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using buttonColors;
 
 public class greenBehavior : colorBehavior
 {
-	override public void determineRules(colorBehavior color)
+	public greenBehavior() { indexReference = 3; }
+	override public bool checkForAdjacent(colorBehavior[] adjacent)
 	{
-		base.determineRules(this);
-
-
+		base.currentColor = this;
+		return base.checkForAdjacent(adjacent);
 	}
 	
 }

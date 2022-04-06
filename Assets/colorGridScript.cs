@@ -6,11 +6,12 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using KModkit;
 using rnd = UnityEngine.Random;
+using colorButtons;
 
-namespace buttonColors
-	{
-		public enum colorNames {Red, Orange, Blue, Green};
-	}
+namespace colorButtons
+{
+    public enum colorNames { Red, Orange, Blue, Green };
+}
 public class colorGridScript : MonoBehaviour {
 
 	public KMBombInfo Bomb;
@@ -29,7 +30,7 @@ public class colorGridScript : MonoBehaviour {
 
 	private List<int> buttonsToPress = new List<int>();
 
-	colorBehavior[] colors = new colorBehavior[]{new redBehavior(), new orangeBehavior(), new blueBehavior(), new greenBehavior()};
+	colorBehavior[] colors = new colorBehavior[]{ new redBehavior(), new orangeBehavior(), new blueBehavior(), new greenBehavior() };
 
 	string[] colorBlindColors = {"Red", "Orange", "Blue", "Green"};
 
@@ -39,7 +40,7 @@ public class colorGridScript : MonoBehaviour {
 
 	private bool colorBlindActive;
 
-	int[] gridColors = new int[25];
+	colorBehavior[,] gridColors = new colorBehavior[5,5];
 
 	bool[] firstColorCondition, secondColorCondition, thirdColorCondition = new bool[25];
 
@@ -74,7 +75,7 @@ public class colorGridScript : MonoBehaviour {
 		{
 			if (colorBlindActive)
 			{
-				cbTexts[i].text = colorBlindColors[gridColors[i]][0].ToString();
+				cbTexts[i].text = colorBlindColors[gridColors[i/5,i%5].indexReference][0].ToString();
 			}
 			else
 			{
@@ -84,19 +85,29 @@ public class colorGridScript : MonoBehaviour {
 
     }
 
+	colorBehavior[] getAdjacents(int x, int y)
+	{
+		colorBehavior up    = x == 5 ? null : gridColors[x+1, y],
+		              down  = x == 0 ? null : gridColors[x-1, y],
+					  left  = y == 0 ? null : gridColors[x, y-1],
+					  right = y == 5 ? null : gridColors[x, y+1];
+		return new colorBehavior[] { up, down, left, right };
+	}
+
 	void randomColorSelection()
 	{
 		for (int i = 0; i < 25; i++)
 		{
-			gridColors[i] = rnd.Range(0, 4);
+			int r = rnd.Range(0, 4), x = i/5, y = i%5;
+			gridColors[x,y] = colors[r];
+			Debug.Log(r);
+			Debug.Log(gridColors[x,y].indexReference);
 
-			buttonLEDS[i].material = gridColorMats[gridColors[i]];
+			buttonLEDS[i].material = gridColorMats[gridColors[x,y].indexReference];
 
-			
+			Debug.Log(gridColors[x,y].checkForAdjacent(getAdjacents(x,y)));
 
-			colors[gridColors[i]].determineRules(new redBehavior());
-
-			Debug.Log("The color is: " + (buttonColors.colorNames)gridColors[i]);
+			Debug.Log("The color is: " + (colorNames)gridColors[x,y].indexReference);
 
 		}
 	}
@@ -108,7 +119,7 @@ public class colorGridScript : MonoBehaviour {
 		blueBehavior bb = new blueBehavior();
 		greenBehavior gb = new greenBehavior();
 
-		rb.determineRules(rb);
+		//rb.determineRules(rb);
 
 		
 	}
@@ -119,6 +130,19 @@ public class colorGridScript : MonoBehaviour {
 		button.AddInteractionPunch(0.5f);
 		if (moduleSolved) return;
 
+		for (int i = 0; i < 25; i++)
+		{
+			if(button == gridColors[i/5,i%5])
+			{
+				if (buttonsToPress[0] == i)
+				{
+					buttonsToPress.RemoveAt(0);
+					buttonLEDS[i].material = gridUnlitColor;
+				}
+			}
+		}
+
+
 
 
 	}
@@ -128,6 +152,8 @@ public class colorGridScript : MonoBehaviour {
     {
 
     }
+
+	
 
 	// Twitch Plays
 
