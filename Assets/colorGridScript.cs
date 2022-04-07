@@ -25,9 +25,9 @@ public class colorGridScript : MonoBehaviour {
 
 	private List<int> buttonsToPress = new List<int>();
 
-	colorConditions[] colors = new colorConditions[] { new colorConditions(0), new colorConditions(1), new colorConditions(2), new colorConditions(3) };
+	colorConditions[] colors = new colorConditions[] { new colorConditions(0), new colorConditions(1), new colorConditions(2), new colorConditions(3), new colorConditions(4) };
 
-	string[] colorBlindColors = {"Red", "Orange", "Blue", "Green"};
+	string[] colorBlindColors = {"Red", "Orange", "Blue", "Green", ""};
 
 
 	static int moduleIdCounter = 1;
@@ -43,7 +43,9 @@ public class colorGridScript : MonoBehaviour {
 	     , thirdColorCondition = new bool[25];
 
 	
+	List<int> blackSquares = new List<int>();
 
+	private int[] prematureUnlit = new int[25];
 
 	void Awake()
     {
@@ -67,6 +69,8 @@ public class colorGridScript : MonoBehaviour {
 		randomColorSelection(); //FIRST: generate those buttons
 		checkFirstRule(); //THEN: check the first rule
 		checkSecondRule();
+		checkThirdRule();
+		addToColorsToPress();
 
 		
 
@@ -97,9 +101,9 @@ public class colorGridScript : MonoBehaviour {
 	colorConditions[] getAdjacents(int x, int y)
 	{
 		colorConditions up    = x == 0 ? null : gridColors[x - 1, y],
-					  down  = x == 4 ? null : gridColors[x + 1, y],
-					  left  = y == 0 ? null : gridColors[x, y - 1],
-					  right = y == 4 ? null : gridColors[x, y + 1];
+					    down  = x == 4 ? null : gridColors[x + 1, y],
+					    left  = y == 0 ? null : gridColors[x, y - 1],
+					    right = y == 4 ? null : gridColors[x, y + 1];
 		return new colorConditions[] { up, down, left, right };
 	}
 
@@ -108,15 +112,30 @@ public class colorGridScript : MonoBehaviour {
 		for (int i = 0; i < 25; i++)
 		{
 			int x = i / 5, y = i % 5;
-			firstColorCondition[i] = gridColors[x, y].checkForAdjacent(getAdjacents(x, y));
+			firstColorCondition[i] = gridColors[x, y].checkSameAdjacent(getAdjacents(x, y));
 			Debug.Log("Is the first condition fulfilled? " + firstColorCondition[i]);
 		}
 	}
 
 	void checkSecondRule()
     {
+		for (int i = 0; i < 25; i++)
+        {
+			int x = i / 5, y = i % 5;
+			secondColorCondition[i] = gridColors[x, y].checkBlackAdjacents(getAdjacents(x, y));
+			Debug.Log("Is the SECOND condition fulfilled? " + secondColorCondition[i]);
+		}
+	}
 
-    }
+	void checkThirdRule()
+	{
+		for (int i = 0; i < 25; i++)
+		{
+			int x = i / 5, y = i % 5;
+			thirdColorCondition[i] = gridColors[x, y].checkForAdjacents(getAdjacents(x, y));
+			Debug.Log("Is the <<third>> condition fulfilled? " + thirdColorCondition[i]);
+		}
+	}
 
 	void buttonPress(KMSelectable button)
 	{
@@ -126,12 +145,20 @@ public class colorGridScript : MonoBehaviour {
 
 		for (int i = 0; i < 25; i++)
 		{
-			if(button == gridColors[i/5,i%5])
+			prematureUnlit[i] = rnd.Range(0, 10);
+			int x = i / 5, y = i % 5;
+			if (button == gridColors[x,y])
 			{
 				if (buttonsToPress[0] == i)
 				{
 					buttonsToPress.RemoveAt(0);
 					buttonLEDS[i].material = gridUnlitColor;
+					blackSquares.Add(i);
+					gridColors[x, y] = colors[4];
+					if (prematureUnlit[i] == 10)
+                    {
+						buttonLEDS[prematureUnlit[i]].material = gridUnlitColor;
+                    }
 				}
                 else
                 {
@@ -149,6 +176,21 @@ public class colorGridScript : MonoBehaviour {
 
 
 	}
+
+	void addToColorsToPress()
+    {
+		for(int i = 0; i < 25; i++)
+		{
+			bool f = firstColorCondition[i]
+			   , s = secondColorCondition[i]
+			   , t = thirdColorCondition[i];
+
+			if ((f || s || t) && (!f || !s || !t))
+            {
+				buttonsToPress.Add(i);
+            }
+		}
+    }
 	
 	
 	void Update()
