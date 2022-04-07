@@ -7,6 +7,7 @@ using UnityEngine;
 using KModkit;
 using rnd = UnityEngine.Random;
 using colorButtons;
+using behaviors;
 
 namespace colorButtons
 {
@@ -30,7 +31,7 @@ public class colorGridScript : MonoBehaviour {
 
 	private List<int> buttonsToPress = new List<int>();
 
-	colorBehavior[] colors = new colorBehavior[]{ new redBehavior(), new orangeBehavior(), new blueBehavior(), new greenBehavior() };
+	colorBehavior[] colors = new colorBehavior[] { new colorBehavior(0), new colorBehavior(1), new colorBehavior(2), new colorBehavior(3) };
 
 	string[] colorBlindColors = {"Red", "Orange", "Blue", "Green"};
 
@@ -67,7 +68,6 @@ public class colorGridScript : MonoBehaviour {
 	void Start()
     {
 		randomColorSelection();
-		buttonBehavior();
 
 		
 
@@ -100,28 +100,15 @@ public class colorGridScript : MonoBehaviour {
 		{
 			int r = rnd.Range(0, 4), x = i/5, y = i%5;
 			gridColors[x,y] = colors[r];
-			Debug.Log(r);
-			Debug.Log(gridColors[x,y].indexReference);
+			Debug.LogFormat("Random is {0}, x is {1}, and y is {2}", r, x, y);
+			Debug.Log("The index is " + gridColors[x,y].indexReference);
 
 			buttonLEDS[i].material = gridColorMats[gridColors[x,y].indexReference];
 
-			Debug.Log(gridColors[x,y].checkForAdjacent(getAdjacents(x,y)));
-
-			Debug.Log("The color is: " + (colorNames)gridColors[x,y].indexReference);
+			//Debug.Log(gridColors[x,y].checkForAdjacent(getAdjacents(x,y)));
+			//Debug.Log("The color is: " + (colorNames)gridColors[x,y].indexReference);
 
 		}
-	}
-
-	void buttonBehavior()
-	{
-		redBehavior rb = new redBehavior();
-		orangeBehavior ob = new orangeBehavior();
-		blueBehavior bb = new blueBehavior();
-		greenBehavior gb = new greenBehavior();
-
-		//rb.determineRules(rb);
-
-		
 	}
 
 	void buttonPress(KMSelectable button)
