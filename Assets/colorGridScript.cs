@@ -45,7 +45,7 @@ public class colorGridScript : MonoBehaviour {
 	
 	List<int> blackSquares = new List<int>();
 
-	private int[] prematureUnlit = new int[25];
+	private int[] prematureChange = new int[25];
 
 	void Awake()
     {
@@ -145,9 +145,9 @@ public class colorGridScript : MonoBehaviour {
 
 		for (int i = 0; i < 25; i++)
 		{
-			prematureUnlit[i] = rnd.Range(0, 10);
+			prematureChange[i] = rnd.Range(0, 10);
 			int x = i / 5, y = i % 5;
-			if (button == gridColors[x,y])
+			if (button == gridButtons[i])
 			{
 				if (buttonsToPress[0] == i)
 				{
@@ -155,9 +155,9 @@ public class colorGridScript : MonoBehaviour {
 					buttonLEDS[i].material = gridUnlitColor;
 					blackSquares.Add(i);
 					gridColors[x, y] = colors[4];
-					if (prematureUnlit[i] == 10)
+					if (prematureChange[i] == 10)
                     {
-						buttonLEDS[prematureUnlit[i]].material = gridUnlitColor;
+						buttonLEDS[prematureChange[i]].material = gridUnlitColor;
                     }
 				}
                 else
@@ -188,7 +188,8 @@ public class colorGridScript : MonoBehaviour {
 			if ((f || s || t) && (!f || !s || !t))
             {
 				buttonsToPress.Add(i);
-            }
+				Debug.Log("New button to press! It is number " + i + " ::: f: " + f + "; s: " + s + "; t: " + t);
+			}
 		}
     }
 	
