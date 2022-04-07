@@ -6,13 +6,7 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 using KModkit;
 using rnd = UnityEngine.Random;
-using colorButtons;
-using behaviors;
 
-namespace colorButtons
-{
-    public enum colorNames { Red, Orange, Blue, Green };
-}
 public class colorGridScript : MonoBehaviour {
 
 	public KMBombInfo Bomb;
@@ -31,9 +25,10 @@ public class colorGridScript : MonoBehaviour {
 
 	private List<int> buttonsToPress = new List<int>();
 
-	colorBehavior[] colors = new colorBehavior[] { new colorBehavior(0), new colorBehavior(1), new colorBehavior(2), new colorBehavior(3) };
+	colorConditions[] colors = new colorConditions[] { new colorConditions(0), new colorConditions(1), new colorConditions(2), new colorConditions(3) };
 
 	string[] colorBlindColors = {"Red", "Orange", "Blue", "Green"};
+
 
 	static int moduleIdCounter = 1;
 	int moduleId;
@@ -41,9 +36,11 @@ public class colorGridScript : MonoBehaviour {
 
 	private bool colorBlindActive;
 
-	colorBehavior[,] gridColors = new colorBehavior[5,5];
+	colorConditions[,] gridColors = new colorConditions[5,5];
 
-	bool[] firstColorCondition, secondColorCondition, thirdColorCondition = new bool[25];
+	bool[] firstColorCondition = new bool[25]
+	     , secondColorCondition = new bool[25]
+	     , thirdColorCondition = new bool[25];
 
 	
 
@@ -67,7 +64,9 @@ public class colorGridScript : MonoBehaviour {
 	
 	void Start()
     {
-		randomColorSelection();
+		randomColorSelection(); //FIRST: generate those buttons
+		checkFirstRule(); //THEN: check the first rule
+		checkSecondRule();
 
 		
 
@@ -85,31 +84,39 @@ public class colorGridScript : MonoBehaviour {
 
     }
 
-	colorBehavior[] getAdjacents(int x, int y)
-	{
-		colorBehavior up    = x == 5 ? null : gridColors[x+1, y],
-		              down  = x == 0 ? null : gridColors[x-1, y],
-					  left  = y == 0 ? null : gridColors[x, y-1],
-					  right = y == 5 ? null : gridColors[x, y+1];
-		return new colorBehavior[] { up, down, left, right };
-	}
-
 	void randomColorSelection()
 	{
 		for (int i = 0; i < 25; i++)
 		{
-			int r = rnd.Range(0, 4), x = i/5, y = i%5;
+			int r = rnd.Range(0, 4), x = i / 5, y = i % 5;
 			gridColors[x,y] = colors[r];
-			Debug.LogFormat("Random is {0}, x is {1}, and y is {2}", r, x, y);
-			Debug.Log("The index is " + gridColors[x,y].indexReference);
-
-			buttonLEDS[i].material = gridColorMats[gridColors[x,y].indexReference];
-
-			//Debug.Log(gridColors[x,y].checkForAdjacent(getAdjacents(x,y)));
-			//Debug.Log("The color is: " + (colorNames)gridColors[x,y].indexReference);
-
+			buttonLEDS[i].material = gridColorMats[gridColors[x, y].indexReference];
 		}
 	}
+
+	colorConditions[] getAdjacents(int x, int y)
+	{
+		colorConditions up    = x == 0 ? null : gridColors[x - 1, y],
+					  down  = x == 4 ? null : gridColors[x + 1, y],
+					  left  = y == 0 ? null : gridColors[x, y - 1],
+					  right = y == 4 ? null : gridColors[x, y + 1];
+		return new colorConditions[] { up, down, left, right };
+	}
+
+	void checkFirstRule()
+	{
+		for (int i = 0; i < 25; i++)
+		{
+			int x = i / 5, y = i % 5;
+			firstColorCondition[i] = gridColors[x, y].checkForAdjacent(getAdjacents(x, y));
+			Debug.Log("Is the first condition fulfilled? " + firstColorCondition[i]);
+		}
+	}
+
+	void checkSecondRule()
+    {
+
+    }
 
 	void buttonPress(KMSelectable button)
 	{
@@ -126,9 +133,18 @@ public class colorGridScript : MonoBehaviour {
 					buttonsToPress.RemoveAt(0);
 					buttonLEDS[i].material = gridUnlitColor;
 				}
+                else
+                {
+					GetComponent<KMBombModule>().HandleStrike();
+                }
+
 			}
 		}
-
+		if (buttonsToPress.Count == 0)
+        {
+			GetComponent<KMBombModule>().HandlePass();
+			moduleSolved = true;
+        }
 
 
 
