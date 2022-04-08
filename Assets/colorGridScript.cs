@@ -25,7 +25,7 @@ public class colorGridScript : MonoBehaviour {
 
 	private List<int> buttonsToPress = new List<int>();
 
-	colorConditions[] colors = new colorConditions[] { new colorConditions(0), new colorConditions(1), new colorConditions(2), new colorConditions(3), new colorConditions(4) };
+	colorConditions[] colors = new colorConditions[5];
 
 	string[] colorBlindColors = {"Red", "Orange", "Blue", "Green", ""};
 
@@ -66,27 +66,34 @@ public class colorGridScript : MonoBehaviour {
 	
 	void Start()
     {
+		for (int i = 0; i < 5; i++ ) colors[i] = new colorConditions(i);
+		//for (int i = 0; i < 5; i++) Debug.Log(colors[i]);
 		randomColorSelection();
-		checkFirstRule(); 
-		checkSecondRule(); 
-		checkThirdRule();
-		addToColorsToPress();
-
+		checkForRules();
 		
 
+		
+    }
+
+	void checkForRules()
+    {
+		buttonsToPress.Clear();
+		checkFirstRule();
+		checkSecondRule();
+		checkThirdRule();
+		addToColorsToPress();
+		setColorblindMode();
+		
+	}
+
+	void setColorblindMode()
+	{
+		if (!colorBlindActive) return;
 		for (int i = 0; i < 25; i++)
 		{
-			if (colorBlindActive)
-			{
-				cbTexts[i].text = colorBlindColors[gridColors[i/5,i%5].indexReference][0].ToString();
-			}
-			else
-			{
-				cbTexts[i].text = "";
-			}
+			cbTexts[i].text = colorBlindColors[gridColors[i / 5, i % 5].indexReference][0].ToString();
 		}
-
-    }
+	}
 
 	void randomColorSelection()
 	{
@@ -113,7 +120,7 @@ public class colorGridScript : MonoBehaviour {
 		{
 			int x = i / 5, y = i % 5;
 			firstColorCondition[i] = gridColors[x, y].checkSameAdjacent(getAdjacents(x, y));
-			Debug.Log("Is the first condition fulfilled? " + firstColorCondition[i]);
+			//Debug.Log("Is the first condition fulfilled? " + firstColorCondition[i]);
 		}
 	}
 
@@ -123,7 +130,7 @@ public class colorGridScript : MonoBehaviour {
         {
 			int x = i / 5, y = i % 5;
 			secondColorCondition[i] = gridColors[x, y].checkBlackAdjacents(getAdjacents(x, y));
-			Debug.Log("Is the SECOND condition fulfilled? " + secondColorCondition[i]);
+			//Debug.Log("Is the SECOND condition fulfilled? " + secondColorCondition[i]);
 		}
 	}
 
@@ -133,42 +140,48 @@ public class colorGridScript : MonoBehaviour {
 		{
 			int x = i / 5, y = i % 5;
 			thirdColorCondition[i] = gridColors[x, y].checkForAdjacents(getAdjacents(x, y));
-			Debug.Log("Is the <<third>> condition fulfilled? " + thirdColorCondition[i]);
+			//Debug.Log("Is the <<third>> condition fulfilled? " + thirdColorCondition[i]);
 		}
 	}
 
 	void buttonPress(KMSelectable button)
 	{
+		/* Styling */ 
 		Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
 		button.AddInteractionPunch(0.5f);
 		if (moduleSolved) return;
 
+
 		for (int i = 0; i < 25; i++)
 		{
-			prematureChange[i] = rnd.Range(0, 10);
 			int x = i / 5, y = i % 5;
 			if (button == gridButtons[i])
 			{
-				if (buttonsToPress[i] == i)
+				if (buttonsToPress.Any(buttonID => buttonID == i))
 				{
-					buttonsToPress.RemoveAt(i);
+					buttonsToPress.RemoveAt(buttonsToPress.IndexOf((b => b == i)));
+
 					buttonLEDS[i].material = gridUnlitColor;
 					if (colorBlindActive && buttonLEDS[i].material == gridUnlitColor)
 					{
 						cbTexts[i].text = "";
 					}
-					blackSquares.Add(0);
+					//blackSquares.Add(i);
 					gridColors[x, y] = colors[4];
-					if (prematureChange[i] == 10)
-                    {
-						buttonLEDS[prematureChange[i]].material = gridUnlitColor;
-                    }
+					for (int j = 0; j < 25; j++)
+					{
+						int x2 = j / 5, y2 = j % 5;
+						if (gridColors[x2, y2].indexReference != 4 && rnd.Range(0, 10) == 0)
+						{
+							updateMaterials(rnd.Range(0, 4), x2, y2);
+						}
+					}
+					checkForRules();
 				}
-                else
-                {
+				else
+				{
 					GetComponent<KMBombModule>().HandleStrike();
-                }
-
+				}
 			}
 		}
 		if (buttonsToPress.Count == 0)
@@ -185,9 +198,12 @@ public class colorGridScript : MonoBehaviour {
             }
 			moduleSolved = true;
         }
+	}
 
-
-
+	void updateMaterials(int randNum, int x, int y)
+	{
+		buttonLEDS[x*5+y].material = gridColorMats[randNum];
+		gridColors[x, y].indexReference = randNum;
 	}
 
 	void addToColorsToPress()
@@ -201,7 +217,7 @@ public class colorGridScript : MonoBehaviour {
 			if ((f || s || t) && (!f || !s || !t))
             {
 				buttonsToPress.Add(i);
-				Debug.Log("New button to press! It is number " + i + " ::: f: " + f + "; s: " + s + "; t: " + t);
+				//Debug.Log("New button to press! It is number " + i + " ::: f: " + f + "; s: " + s + "; t: " + t);
 			}
 		}
     }
