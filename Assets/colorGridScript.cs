@@ -66,9 +66,9 @@ public class colorGridScript : MonoBehaviour {
 	
 	void Start()
     {
-		randomColorSelection(); //FIRST: generate those buttons
-		checkFirstRule(); //THEN: check the first rule
-		checkSecondRule();
+		randomColorSelection();
+		checkFirstRule(); 
+		checkSecondRule(); 
 		checkThirdRule();
 		addToColorsToPress();
 
@@ -149,11 +149,15 @@ public class colorGridScript : MonoBehaviour {
 			int x = i / 5, y = i % 5;
 			if (button == gridButtons[i])
 			{
-				if (buttonsToPress[0] == i)
+				if (buttonsToPress[i] == i)
 				{
-					buttonsToPress.RemoveAt(0);
+					buttonsToPress.RemoveAt(i);
 					buttonLEDS[i].material = gridUnlitColor;
-					blackSquares.Add(i);
+					if (colorBlindActive && buttonLEDS[i].material == gridUnlitColor)
+					{
+						cbTexts[i].text = "";
+					}
+					blackSquares.Add(0);
 					gridColors[x, y] = colors[4];
 					if (prematureChange[i] == 10)
                     {
@@ -169,7 +173,16 @@ public class colorGridScript : MonoBehaviour {
 		}
 		if (buttonsToPress.Count == 0)
         {
+			Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
 			GetComponent<KMBombModule>().HandlePass();
+			for (int i = 0; i < 25; i++)
+            {
+				buttonLEDS[i].material = gridUnlitColor;
+                if (colorBlindActive && buttonLEDS[i].material == gridUnlitColor)
+                {
+					cbTexts[i].text = "";
+                }
+            }
 			moduleSolved = true;
         }
 
