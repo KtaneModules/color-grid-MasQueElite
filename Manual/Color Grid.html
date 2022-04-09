@@ -8,55 +8,66 @@
     <link rel="stylesheet" type="text/css" href="css/normalize.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <link rel="stylesheet" type="text/css" href="css/font.css">
-    <script src="js/ktane-utils.js"></script>
+    <script src="src/ktane-utils.js"></script>
 </head>
+<style>
+    p { margin: 0 }
+    tr { width: 100px }
+    table p::before { content: "- " }
+    table {
+        width: calc(100% + 70px);
+        margin-left: -35px;
+    }
+    .spaced>p:nth-child(2) { margin: 10px 0 }
+</style>
 <body>
     <div class="section">
         <div class="page page-bg-01">
             <div class="page-header">
-                <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
-                <span class="page-header-section-title">Color Grid</span>
+                <p class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</p>
+                <p class="page-header-section-title">Color Grid</p>
             </div>
             <div class="page-content">
                 <img src="img/Component/Color Grid.svg" class="diagram">
                 <h2>On the Subject of Color Grid</h2>
                 <p class="flavour-text">You must be seeing things.</p>
-				<li>Each button on the grid will be colored one of four colors on a 5x5 grid.</li>
-				<li>Each color corresponds to a set of three conditions. You should press a button if either one or two conditions are met. A button wil become black if it is pressed.</li>
-				<li>The buttons can be pressed in any order, meaning that the answer will change upon each input.</li>
-				<li>Button adjaceny only refers to orthogonal directions.</li>
-				<li>Upon each button press, each non-pressed button has a 10% chance to change. This does mean that the module can turn into a solved state prematurely.</li>
-				<p></p>
-				<table>
-					<tr>
-						<th>Red</th>
-						<th>Orange</th>
-						<th>Blue</th>
-						<th>Green</th>
-					</tr>
-					<tr>
-						<td>
-							<li>There is an adjacent red square.</li>
-							<li>There are three black squares adjacent.</li>
-							<li>No blue squares are adjacent.</li>
-						</td>
-						<td>
-							<li>There is an adjacent orange square.</li>
-							<li>There are two black squares adjacent.</li>
-							<li>No red squares are adjacent.</li>
-						</td>
-						<td>
-							<li>There is an adjacent blue square.</li>
-							<li>There is one adjacent black square.</li>
-							<li>No green squares are adjacent.</li>
-						</td>
-						<td>
-							<li>There is an adjacent green square.</li>
-							<li>There are no adjacent black squares.</li>
-							<li>No orange squares are adjacent.</li>
-						</td>
-				</table>		
-
+                <ul>
+                    <li>Each button on the grid will be colored one of four colors on a 5x5 grid.</li>
+                    <li>Each color corresponds to a set of three conditions. You should press a button if either one or two conditions are met. A button wil become black if it is pressed.</li>
+                    <li>The buttons can be pressed in any order, meaning that the answer will change upon each input.</li>
+                    <li>Button adjaceny only refers to orthogonal directions.</li>
+                    <li>Upon each button press, each non-pressed button has a 10% chance to change. This does mean that the module can turn into a solved state prematurely.</li>
+                </ul>
+                <table>
+                    <tr>
+                        <th>Red</th>
+                        <th>Orange</th>
+                        <th>Blue</th>
+                        <th>Green</th>
+                    </tr>
+                    <tr>
+                        <td class="spaced">
+                            <p>There is an adjacent red square.</p>
+                            <p>There are three black squares adjacent.</p>
+                            <p>No blue squares are adjacent.</p>
+                        </td>
+                        <td>
+                            <p>There is an adjacent orange square.</p>
+                            <p>There are two black squares adjacent.</p>
+                            <p>No red squares are adjacent.</p>
+                        </td>
+                        <td>
+                            <p>There is an adjacent blue square.</p>
+                            <p>There is one adjacent black square.</p>
+                            <p>No green squares are adjacent.
+                        </td>
+                        <td>
+                            <p>There is an adjacent green square.</p>
+                            <p>There are no adjacent black squares.</p>
+                            <p>No orange squares are adjacent.</p>
+                        </td>
+                    </tr>
+                </table>		
             </div>
             <div class="page-footer relative-footer">Page 1 of 1</div>
         </div>

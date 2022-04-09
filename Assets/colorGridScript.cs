@@ -29,7 +29,6 @@ public class colorGridScript : MonoBehaviour {
 
 	string[] colorBlindColors = {"Red", "Orange", "Blue", "Green", ""};
 
-
 	static int moduleIdCounter = 1;
 	int moduleId;
 	private bool moduleSolved;
@@ -42,28 +41,22 @@ public class colorGridScript : MonoBehaviour {
 	     , secondColorCondition = new bool[25]
 	     , thirdColorCondition = new bool[25];
 
-	
 	List<int> blackSquares = new List<int>();
 
 	private int[] prematureChange = new int[25];
 
 	void Awake()
     {
-
 		moduleId = moduleIdCounter++;
-
-
 
 		foreach (KMSelectable button in gridButtons)
 		{
 			button.OnInteract += delegate () { buttonPress(button); return false; };
 		}
-
 		colorBlindActive = Colorblind.ColorblindModeActive;
 
     }
 
-	
 	void Start()
     {
 		for (int i = 0; i < 5; i++ ) colors[i] = new colorConditions(i);
@@ -221,14 +214,6 @@ public class colorGridScript : MonoBehaviour {
 			}
 		}
     }
-	
-	
-	void Update()
-    {
-
-    }
-
-	
 
 	// Twitch Plays
 
@@ -245,11 +230,9 @@ public class colorGridScript : MonoBehaviour {
     }
 
 	IEnumerator TwitchHandleForceSolve()
-    {
+	{
 		yield return null;
-    }
-
-
+	}
 }
 
 
