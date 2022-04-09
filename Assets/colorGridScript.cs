@@ -30,7 +30,7 @@ public class colorGridScript : MonoBehaviour {
 	string[] colorBlindColors = {"Red", "Orange", "Blue", "Green", ""};
 
 	static int moduleIdCounter = 1;
-	int moduleId;
+	int moduleId; //should you be using pragma disable 414 here as well? Hm?
 	private bool moduleSolved;
 
 	private bool colorBlindActive;
@@ -207,16 +207,15 @@ public class colorGridScript : MonoBehaviour {
 			   , s = secondColorCondition[i]
 			   , t = thirdColorCondition[i];
 
-			if ((f || s || t) && (!f || !s || !t))
+			if (!(f && s && t || !f && !s && !t)) //TODO: we might change this for logistics problems
             {
 				buttonsToPress.Add(i);
-				//Debug.Log("New button to press! It is number " + i + " ::: f: " + f + "; s: " + s + "; t: " + t);
+				Debug.Log("New button to press! It is number " + i + " ::: f: " + f + "; s: " + s + "; t: " + t);
 			}
 		}
     }
 
 	// Twitch Plays
-
 
 #pragma warning disable 414
 	private readonly string TwitchHelpMessage = @"Use <!{0} foobar> to do something.";

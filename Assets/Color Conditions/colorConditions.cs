@@ -31,7 +31,7 @@ public class colorConditions
 	}
 	public bool checkForAdjacents(colorConditions[] adjacent)
 	{
-		int[] colorsToCheck = { 1, 3, 0, 2 };
+		int[] colorsToCheck = { 1, 3, 0, 2, 5 };
 		for (int i = 0; i < 4; i++)
 		{
 			if (!typeof(colorConditions).IsInstanceOfType(adjacent[i])) continue;
