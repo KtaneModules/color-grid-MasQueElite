@@ -18,7 +18,7 @@ public class colorGridScript : MonoBehaviour {
 	public KMSelectable[] gridButtons;
 	public Material[] gridColorMats;
 	public Material gridUnlitColor;
-
+	
 	public MeshRenderer[] buttonLEDS;
 
 	public TextMesh[] cbTexts;
@@ -27,10 +27,10 @@ public class colorGridScript : MonoBehaviour {
 
 	colorConditions[] colors = new colorConditions[5];
 
-	string[] colorBlindColors = {"Red", "Orange", "Blue", "Green", ""};
+	string[] colorBlindColors = { "Red", "Orange", "Blue", "Green", "" };
 
 	static int moduleIdCounter = 1;
-	int moduleId; //should you be using pragma disable 414 here as well? Hm?
+	int moduleId;
 	private bool moduleSolved;
 
 	private bool colorBlindActive;
@@ -40,10 +40,6 @@ public class colorGridScript : MonoBehaviour {
 	bool[] firstColorCondition = new bool[25]
 	     , secondColorCondition = new bool[25]
 	     , thirdColorCondition = new bool[25];
-
-	List<int> blackSquares = new List<int>();
-
-	private int[] prematureChange = new int[25];
 
 	void Awake()
     {
@@ -60,7 +56,6 @@ public class colorGridScript : MonoBehaviour {
 	void Start()
     {
 		for (int i = 0; i < 5; i++ ) colors[i] = new colorConditions(i);
-		//for (int i = 0; i < 5; i++) Debug.Log(colors[i]);
 		randomColorSelection();
 		checkForRules();
 		
@@ -76,7 +71,6 @@ public class colorGridScript : MonoBehaviour {
 		checkThirdRule();
 		addToColorsToPress();
 		setColorblindMode();
-		
 	}
 
 	void setColorblindMode()
@@ -84,7 +78,7 @@ public class colorGridScript : MonoBehaviour {
 		if (!colorBlindActive) return;
 		for (int i = 0; i < 25; i++)
 		{
-			cbTexts[i].text = colorBlindColors[gridColors[i / 5, i % 5].indexReference][0].ToString();
+			cbTexts[i].text = colorBlindColors[gridColors[i / 5, i % 5].indexReference].ToString();
 		}
 	}
 
@@ -113,7 +107,7 @@ public class colorGridScript : MonoBehaviour {
 		{
 			int x = i / 5, y = i % 5;
 			firstColorCondition[i] = gridColors[x, y].checkSameAdjacent(getAdjacents(x, y));
-			//Debug.Log("Is the first condition fulfilled? " + firstColorCondition[i]);
+			//Debug.Log("Is the first condition fulfilled? " + firstColorCondition[i]); DEBUG
 		}
 	}
 
@@ -123,7 +117,7 @@ public class colorGridScript : MonoBehaviour {
         {
 			int x = i / 5, y = i % 5;
 			secondColorCondition[i] = gridColors[x, y].checkBlackAdjacents(getAdjacents(x, y));
-			//Debug.Log("Is the SECOND condition fulfilled? " + secondColorCondition[i]);
+			//Debug.Log("Is the SECOND condition fulfilled? " + secondColorCondition[i]); DEBUG
 		}
 	}
 
@@ -133,17 +127,15 @@ public class colorGridScript : MonoBehaviour {
 		{
 			int x = i / 5, y = i % 5;
 			thirdColorCondition[i] = gridColors[x, y].checkForAdjacents(getAdjacents(x, y));
-			//Debug.Log("Is the <<third>> condition fulfilled? " + thirdColorCondition[i]);
+			//Debug.Log("Is the <<third>> condition fulfilled? " + thirdColorCondition[i]); DEBUG
 		}
 	}
 
 	void buttonPress(KMSelectable button)
 	{
-		/* Styling */ 
 		Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, transform);
 		button.AddInteractionPunch(0.5f);
 		if (moduleSolved) return;
-
 
 		for (int i = 0; i < 25; i++)
 		{
@@ -155,11 +147,11 @@ public class colorGridScript : MonoBehaviour {
 					buttonsToPress.RemoveAt(buttonsToPress.IndexOf((b => b == i)));
 
 					buttonLEDS[i].material = gridUnlitColor;
+					gridColors[x, y].indexReference = 4;
 					if (colorBlindActive && buttonLEDS[i].material == gridUnlitColor)
 					{
 						cbTexts[i].text = "";
 					}
-					//blackSquares.Add(i);
 					gridColors[x, y] = colors[4];
 					for (int j = 0; j < 25; j++)
 					{
@@ -174,9 +166,16 @@ public class colorGridScript : MonoBehaviour {
 				else
 				{
 					GetComponent<KMBombModule>().HandleStrike();
+					Debug.LogFormat("[Color Grid #{0}] You pressed the button number {1}. That's a strike!", moduleId, (x * 5 + y));
+					string log = "<< Here are the buttons you have to press: ";
+					foreach (var b in buttonsToPress) log += (b+1) + " ";
+					Debug.LogFormat("[Color Grid #{0}] {1} >>", moduleId, log);
 				}
 			}
 		}
+		string debug = "NEW string of buttons to press: ";
+		foreach (var b in buttonsToPress) debug += (b+1) + " ";
+		Debug.LogFormat("[Color Grid #{0}] {1}", moduleId, debug);
 		if (buttonsToPress.Count == 0)
         {
 			Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, transform);
@@ -190,7 +189,8 @@ public class colorGridScript : MonoBehaviour {
                 }
             }
 			moduleSolved = true;
-        }
+			Debug.LogFormat("[Color Grid #{0}] You pressed all the correct buttons. That's a solve!", moduleId);
+		}
 	}
 
 	void updateMaterials(int randNum, int x, int y)
@@ -203,17 +203,21 @@ public class colorGridScript : MonoBehaviour {
     {
 		for(int i = 0; i < 25; i++)
 		{
+			int x = i / 5, y = i % 5;
 			bool f = firstColorCondition[i]
 			   , s = secondColorCondition[i]
 			   , t = thirdColorCondition[i];
 
-			if (!(f && s && t || !f && !s && !t)) //TODO: we might change this for logistics problems
-            {
+			if (gridColors[x, y].indexReference < 4 && (f && !s && !t || !f && s && !t || !f && !s && t))
+			{
 				buttonsToPress.Add(i);
-				Debug.Log("New button to press! It is number " + i + " ::: f: " + f + "; s: " + s + "; t: " + t);
+				//Debug.Log("New button to press! It is number " + i + " ::: f: " + f + "; s: " + s + "; t: " + t); DEBUG
 			}
 		}
-    }
+		string debug = "Initial string of buttons to press: ";
+		foreach (var b in buttonsToPress) debug += (b+1) + " ";
+		Debug.LogFormat("[Color Grid #{0}] {1}", moduleId, debug);
+	}
 
 	// Twitch Plays
 

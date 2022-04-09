@@ -348,11 +348,6 @@ Prefab:
     - target: {fileID: 114745380512845644, guid: 430cd8f4f1c658d4aa82b1e1d3e77659,
         type: 2}
       propertyPath: _colorblindMode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114452687767033690, guid: 430cd8f4f1c658d4aa82b1e1d3e77659,
-        type: 2}
-      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
