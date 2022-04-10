@@ -345,11 +345,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 114067354399916042, guid: 430cd8f4f1c658d4aa82b1e1d3e77659,
-        type: 2}
-      propertyPath: ModuleType
-      value: colorGrid
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 430cd8f4f1c658d4aa82b1e1d3e77659, type: 2}
   m_IsPrefabParent: 0
