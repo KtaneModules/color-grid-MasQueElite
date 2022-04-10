@@ -230,11 +230,11 @@ public class colorGridScript : MonoBehaviour {
 
 		gridButtons[command[0] - 'A' + 5 * (command[1] - '1')].OnInteract();
 	}
-   
 
 	IEnumerator TwitchHandleForcedSolve()
 	{
 		yield return null;
+
         while (!moduleSolved)
         {
 			gridButtons[buttonsToPress[0]].OnInteract();
@@ -242,8 +242,3 @@ public class colorGridScript : MonoBehaviour {
         }
 	}
 }
-
-
-
-
-
