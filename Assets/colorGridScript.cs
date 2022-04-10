@@ -103,7 +103,6 @@ public class colorGridScript : MonoBehaviour {
 		{
 			int x = i / 5, y = i % 5;
 			gridColors[x, y].conditions[0] = gridColors[x, y].checkSameAdjacent(getAdjacents(x, y));
-			//Debug.Log("Is the first condition fulfilled? " + firstColorCondition[i]); DEBUG
 		}
 	}
 
@@ -113,7 +112,6 @@ public class colorGridScript : MonoBehaviour {
         {
 			int x = i / 5, y = i % 5;
 			gridColors[x, y].conditions[1] = gridColors[x, y].checkBlackAdjacents(getAdjacents(x, y));
-			//Debug.Log("Is the SECOND condition fulfilled? " + secondColorCondition[i]); DEBUG
 		}
 	}
 
@@ -123,7 +121,6 @@ public class colorGridScript : MonoBehaviour {
 		{
 			int x = i / 5, y = i % 5;
 			gridColors[x, y].conditions[2] = gridColors[x, y].checkForAdjacents(getAdjacents(x, y));
-			//Debug.Log("Is the <<third>> condition fulfilled? " + thirdColorCondition[i]); DEBUG
 		}
 	}
 
@@ -158,7 +155,7 @@ public class colorGridScript : MonoBehaviour {
 				else
 				{
 					GetComponent<KMBombModule>().HandleStrike();
-					Debug.LogFormat("[Color Grid #{0}] You pressed the button number {1}. That's a strike!", moduleId, (x * 5 + y));
+					Debug.LogFormat("[Color Grid #{0}] You pressed the button number {1} [{2}] ({3} {4} {5}). That's a strike!", moduleId, (x * 5 + y), colorBlindColors[gridColors[x, y].indexReference], gridColors[x, y].conditions[0], gridColors[x, y].conditions[1], gridColors[x, y].conditions[2]);
 					string debug = "<< Here are the buttons you have to press: ";
 					foreach (int correctButton in buttonsToPress)
 					{
@@ -198,10 +195,10 @@ public class colorGridScript : MonoBehaviour {
 			     s = gridColors[x, y].conditions[1],
 			     t = gridColors[x, y].conditions[2];
 
-			if (gridColors[x, y].indexReference < 4 && ((f && !s && !t) || (!f && s && !t) || (!f && !s && t)))
+			if (gridColors[x, y].indexReference < 4 && (f && s || f && t || s && t))
 			{
 				buttonsToPress.Add(i);
-				//Debug.Log("New button to press! It is number " + i + " ::: f: " + f + "; s: " + s + "; t: " + t); DEBUG
+				//Debug.Log("New button to press! It is number " + (i+1) + " ::: f: " + f + "; s: " + s + "; t: " + t); DEBUG
 			}
 		}
 		string debug = "String of buttons to press: ";

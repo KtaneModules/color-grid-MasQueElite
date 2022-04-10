@@ -12,7 +12,6 @@ public class colorConditions
 	public bool isUnityObject(colorConditions instance) { return typeof(colorConditions).IsInstanceOfType(instance); }
 	public bool checkSameAdjacent(colorConditions[] adjacent)
 	{
-		// This is just to check whether or not each button is adjacent orthogonally to the same color.
 		for (int i = 0; i < 4; i++)
 		{
 			if (!isUnityObject(adjacent[i])) continue;
@@ -32,11 +31,12 @@ public class colorConditions
 	}
 	public bool checkForAdjacents(colorConditions[] adjacent)
 	{
-		int[] colorsToCheck = { 1, 3, 0, 2, 5 };
+		int[] colorsToCheck = { 2, 0, 3, 1, 5 };
+        
 		for (int i = 0; i < 4; i++)
 		{
 			if (!isUnityObject(adjacent[i])) continue;
-			if (adjacent[i].indexReference == colorsToCheck[adjacent[i].indexReference]) return false;
+			if (adjacent[i].indexReference == colorsToCheck[indexReference]) return false;
 		}
 		return true;
 	}
