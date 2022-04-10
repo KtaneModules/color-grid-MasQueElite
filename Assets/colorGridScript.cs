@@ -9,35 +9,28 @@ using rnd = UnityEngine.Random;
 
 public class colorGridScript : MonoBehaviour {
 
-	public KMBombInfo Bomb;
-	public KMAudio Audio;
-	public KMBombModule Module;
+	public KMBombInfo Bomb; //Bomb information
+	public KMAudio Audio; //Audio management
+	public KMBombModule Module; //Module management
+	public KMColorblindMode Colorblind; //Colorblind instance
 
-	public KMColorblindMode Colorblind;
-
-	public KMSelectable[] gridButtons;
-	public Material[] gridColorMats;
-	public Material gridUnlitColor;
+	public Material[] gridColorMats; //Materials: red, orange, blue, green, black
+	string[] colorBlindColors = { "Red", "Orange", "Blue", "Green", " " }; //Names of the colors
 	
-	public MeshRenderer[] buttonLEDS;
+	public KMSelectable[] gridButtons; //Selectables of the buttons
+	public MeshRenderer[] buttonLEDS; //Buttons' materials management
 
-	public TextMesh[] cbTexts;
+	public TextMesh[] cbTextMeshes; //Buttons' texts (if colorblind is enabled)
 
-	private List<int> buttonsToPress = new List<int>();
-
-	string[] colorBlindColors = { "Red", "Orange", "Blue", "Green", " " };
+	private List<int> buttonsToPress = new List<int>(); //List of correct buttons
 
 	static int moduleIdCounter = 1;
 	int moduleId;
-	private bool moduleSolved;
+	private bool moduleSolved; //basic vars
 
-	private bool colorBlindActive;
+	private bool colorBlindActive; //bool for colorblind
 
-	colorConditions[,] gridColors = new colorConditions[5,5];
-
-	bool[] firstColorCondition = new bool[25]
-	     , secondColorCondition = new bool[25]
-	     , thirdColorCondition = new bool[25];
+	colorConditions[,] gridColors = new colorConditions[5,5]; //Each button has assigned an instance of colorConditions
 
 	void Awake()
     {
@@ -64,23 +57,23 @@ public class colorGridScript : MonoBehaviour {
 		checkSecondRule();
 		checkThirdRule();
 		addToColorsToPress();
-		setColorblindMode();
+		updateColorblindMode();
 	}
 
-	void setColorblindMode()
+	void updateColorblindMode()
 	{
 		if (colorBlindActive)
 		{
 			for (int i = 0; i < 25; i++)
 			{
-				cbTexts[i].text = colorBlindColors[gridColors[i / 5, i % 5].indexReference][0].ToString();
+				cbTextMeshes[i].text = colorBlindColors[gridColors[i / 5, i % 5].indexReference][0].ToString();
 			}
 		}
         else
 		{
 			for (int i = 0; i < 25; i++)
 			{
-				cbTexts[i].text = "";
+				cbTextMeshes[i].text = "";
 			}
 		}
 	}
@@ -109,7 +102,7 @@ public class colorGridScript : MonoBehaviour {
 		for (int i = 0; i < 25; i++)
 		{
 			int x = i / 5, y = i % 5;
-			firstColorCondition[i] = gridColors[x, y].checkSameAdjacent(getAdjacents(x, y));
+			gridColors[x, y].conditions[0] = gridColors[x, y].checkSameAdjacent(getAdjacents(x, y));
 			//Debug.Log("Is the first condition fulfilled? " + firstColorCondition[i]); DEBUG
 		}
 	}
@@ -119,7 +112,7 @@ public class colorGridScript : MonoBehaviour {
 		for (int i = 0; i < 25; i++)
         {
 			int x = i / 5, y = i % 5;
-			secondColorCondition[i] = gridColors[x, y].checkBlackAdjacents(getAdjacents(x, y));
+			gridColors[x, y].conditions[1] = gridColors[x, y].checkBlackAdjacents(getAdjacents(x, y));
 			//Debug.Log("Is the SECOND condition fulfilled? " + secondColorCondition[i]); DEBUG
 		}
 	}
@@ -129,7 +122,7 @@ public class colorGridScript : MonoBehaviour {
 		for (int i = 0; i < 25; i++)
 		{
 			int x = i / 5, y = i % 5;
-			thirdColorCondition[i] = gridColors[x, y].checkForAdjacents(getAdjacents(x, y));
+			gridColors[x, y].conditions[2] = gridColors[x, y].checkForAdjacents(getAdjacents(x, y));
 			//Debug.Log("Is the <<third>> condition fulfilled? " + thirdColorCondition[i]); DEBUG
 		}
 	}
@@ -149,7 +142,7 @@ public class colorGridScript : MonoBehaviour {
 				{
 					buttonsToPress.RemoveAt(buttonsToPress.IndexOf((b => b == i)));
 
-					buttonLEDS[i].material = gridUnlitColor;
+					buttonLEDS[i].material = gridColorMats[4];
 					gridColors[x, y].indexReference = 4;
 					gridColors[x, y] = new colorConditions(4);
 					for (int j = 0; j < 25; j++)
@@ -167,11 +160,10 @@ public class colorGridScript : MonoBehaviour {
 					GetComponent<KMBombModule>().HandleStrike();
 					Debug.LogFormat("[Color Grid #{0}] You pressed the button number {1}. That's a strike!", moduleId, (x * 5 + y));
 					string debug = "<< Here are the buttons you have to press: ";
-					for (int j = 0; j < buttonsToPress.Count; j++)
+					foreach (int correctButton in buttonsToPress)
 					{
-						int x2 = buttonsToPress[j] / 5, y2 = buttonsToPress[j] % 5;
-						if (colorBlindColors[gridColors[x2, y2].indexReference] == " ") continue;
-						debug += string.Format("{0} [{1}] ({2} {3} {4}); ", buttonsToPress[j] + 1, colorBlindColors[gridColors[x2, y2].indexReference], firstColorCondition[j], secondColorCondition[j], thirdColorCondition[j]);
+						int x2 = correctButton / 5, y2 = correctButton % 5;
+  						debug += string.Format("{0} [{1}] ({2} {3} {4}); ", correctButton + 1, colorBlindColors[gridColors[x2, y2].indexReference], gridColors[x2, y2].conditions[0], gridColors[x2, y2].conditions[1], gridColors[x2, y2].conditions[2]);
 					}
 					Debug.LogFormat("[Color Grid #{0}] {1} >>", moduleId, debug);
 				}
@@ -183,9 +175,9 @@ public class colorGridScript : MonoBehaviour {
 			GetComponent<KMBombModule>().HandlePass();
 			for (int i = 0; i < 25; i++)
             {
-				buttonLEDS[i].material = gridUnlitColor;
-				cbTexts[i].text = "";
-            }
+				buttonLEDS[i].material = gridColorMats[4];
+			}
+			updateColorblindMode();
 			moduleSolved = true;
 			Debug.LogFormat("[Color Grid #{0}] You pressed all the correct buttons. That's a solve!", moduleId);
 		}
@@ -202,9 +194,9 @@ public class colorGridScript : MonoBehaviour {
 		for(int i = 0; i < 25; i++)
 		{
 			int x = i / 5, y = i % 5;
-			bool f = firstColorCondition[i]
-			   , s = secondColorCondition[i]
-			   , t = thirdColorCondition[i];
+			bool f = gridColors[x, y].conditions[0],
+			     s = gridColors[x, y].conditions[1],
+			     t = gridColors[x, y].conditions[2];
 
 			if (gridColors[x, y].indexReference < 4 && ((f && !s && !t) || (!f && s && !t) || (!f && !s && t)))
 			{
@@ -230,7 +222,7 @@ public class colorGridScript : MonoBehaviour {
 		if (command == "CB")
 		{
 			colorBlindActive = !colorBlindActive;
-			setColorblindMode();
+			updateColorblindMode();
 			yield break;
 		}
 		if (command.Length != 2 || !"ABCDE".Contains(command[0]) || !"12345".Contains(command[1]))
