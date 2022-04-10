@@ -8168,6 +8168,12 @@ MonoBehaviour:
   Audio: {fileID: 114725530412209764}
   Module: {fileID: 114067354399916042}
   Colorblind: {fileID: 114745380512845644}
+  gridColorMats:
+  - {fileID: 2100000, guid: ec57613fe67f2a04e8b09eeb48f68684, type: 2}
+  - {fileID: 2100000, guid: ee802971fecfdd34b960c32e349592ac, type: 2}
+  - {fileID: 2100000, guid: fbda4124df27e4d40bec9cd24d21058b, type: 2}
+  - {fileID: 2100000, guid: d3291af86a7c6b14eb896cc72e8dc387, type: 2}
+  - {fileID: 2100000, guid: c601638b82b69d6449b8efd0ddc9dfc0, type: 2}
   gridButtons:
   - {fileID: 114312423617147148}
   - {fileID: 114228257035359800}
@@ -8194,12 +8200,6 @@ MonoBehaviour:
   - {fileID: 114256622081733296}
   - {fileID: 114554026869614574}
   - {fileID: 114079156525571008}
-  gridColorMats:
-  - {fileID: 2100000, guid: ec57613fe67f2a04e8b09eeb48f68684, type: 2}
-  - {fileID: 2100000, guid: ee802971fecfdd34b960c32e349592ac, type: 2}
-  - {fileID: 2100000, guid: fbda4124df27e4d40bec9cd24d21058b, type: 2}
-  - {fileID: 2100000, guid: d3291af86a7c6b14eb896cc72e8dc387, type: 2}
-  gridUnlitColor: {fileID: 2100000, guid: c601638b82b69d6449b8efd0ddc9dfc0, type: 2}
   buttonLEDS:
   - {fileID: 23171654423359368}
   - {fileID: 23436923043137664}
@@ -8226,7 +8226,7 @@ MonoBehaviour:
   - {fileID: 23799500901585996}
   - {fileID: 23095823375933260}
   - {fileID: 23915154582039766}
-  cbTexts:
+  cbTextMeshes:
   - {fileID: 102730660821627630}
   - {fileID: 102823707263124230}
   - {fileID: 102284695614097342}
