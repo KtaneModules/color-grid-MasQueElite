@@ -127,22 +127,21 @@ public class colorGridScript : MonoBehaviour {
 
 	void log()
     {
-		string debug = "The buttons, in reading order, are: ";
-        for (int i = 0; i < gridColors.Length; i++)
+		Debug.LogFormat("[Color Grid #{0}] The buttons, in reading order, are:", moduleId);
+		for (int i = 0; i < gridColors.Length; i++)
         {
 			int x = i / 5, y = i % 5;
 			if (colorBlindColors[gridColors[x, y].indexReference] == " ")
-				debug += Environment.NewLine + "[Inactive] <DON'T>";
+				Debug.LogFormat("[Color Grid #{0}] [Inactive] <DON'T>", moduleId);
 			else
-				debug += string.Format("{0}[{1}] ({2} {3} {4}) <{5}>",
-					Environment.NewLine,
+				Debug.LogFormat("[Color Grid #{0}] [{1}] ({2} {3} {4}) <{5}>",
+					moduleId,
 					colorBlindColors[gridColors[x, y].indexReference],
 					gridColors[x, y].conditions[0],
 					gridColors[x, y].conditions[1],
 					gridColors[x, y].conditions[2],
 					buttonsToPress.Contains(i) ? "PRESS" : "DON'T");
 		}
-		Debug.LogFormat("[Color Grid #{0}] {1}", moduleId, debug);
 	}
 
 	void buttonPress(KMSelectable button)
