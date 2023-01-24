@@ -15,6 +15,6 @@ MonoBehaviour:
   title: Color Grid
   author: "Kilo Bites, M\xE1sQu\xE9\xC9lite"
   description: Press the changing buttons by checking some rules on a 5x5 grid.
-  version: 1.0
+  version: 1.5
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 53522b5e4ee7fa44c9f45496bf5c5a60, type: 3}

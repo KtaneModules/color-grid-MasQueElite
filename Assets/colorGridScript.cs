@@ -228,7 +228,7 @@ public class colorGridScript : MonoBehaviour {
 	// Twitch Plays
 
 #pragma warning disable 414
-	private readonly string TwitchHelpMessage = @"Use !{0} A/B/C/D/E/1/2/3/4. | !{0} cb to toggle colorblind mode.";
+	private readonly string TwitchHelpMessage = @"Use !{0} A/B/C/D/E/1/2/3/4/5. | !{0} cb to toggle colorblind mode.";
 #pragma warning restore 414
 
 	IEnumerator ProcessTwitchCommand(string command)
